@@ -14,10 +14,10 @@ module Dradis::Plugins::CSV
           CSV.foreach(params[:file], headers: true) do |row|
             process_row(row)
           end
-          logger.info{ "CSV processed." }
+          # logger.info{ "CSV processed." }
         rescue ::CSV::MalformedCSVError => e
           error = "The CSV seems to be malformed: #{e.message}."
-          logger.fatal { error }
+          # logger.fatal { error }
           content_service.create_note(text: error)
           false
         end
@@ -37,15 +37,15 @@ module Dradis::Plugins::CSV
         csv_id = data[@csv_id_column]
         node = data[@node_column]
 
-        issue_text = @issue_mappings.map do |column, field|
-          "#[#{field}]#\n#{data[column]}"
+        issue_text = @issue_mappings.to_h.map do |_key, mapping|
+          "#[#{mapping[:field_name]}]#\n#{data[mapping[:column_name]]}"
         end.join("\n\n")
 
         issue = content_service.create_issue(text: issue_text, id: csv_id)
         node = content_service.create_node(label: node, type: :host)
 
-        evidence_content = @evidence_mappings.map do |column, field|
-          "#[#{field}]#\n#{data[column]}"
+        evidence_content = @evidence_mappings.to_h.map do |_key, mapping|
+          "#[#{mapping[:field_name]}]#\n#{data[mapping[:column_name]]}"
         end.join("\n\n")
 
         content_service.create_evidence(issue: issue, node: node, content: evidence_content)
