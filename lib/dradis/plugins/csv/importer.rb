@@ -5,13 +5,6 @@ module Dradis::Plugins::CSV
     end
 
     def import(params={})
-      logger.info { "Validating uploaded file..." }
-
-      if File.extname(params[:file]).downcase != '.csv'
-        logger.info { 'Invalid file' }
-        return false
-      end
-
       logger.info { 'Parsing CSV file...' }
 
       uid = @logger.uid
