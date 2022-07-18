@@ -12,6 +12,8 @@
 <% end %>
 
 <div class="content-container">
+  <%= "Uploaded file: #{@attachment.filename}" %>
+
   <table class="table table-striped mb-0"
     data-behavior="dradis-datatable"
     data-item-name="csv_item"
@@ -24,7 +26,7 @@
         <th>Type</th>
         <th>Field in Dradis</th>
         <%# if RTP && RTP has fields defined %>
-          <th>Validation</th> 
+          <th>Validation</th>
         <%# end %>
       </tr>
     </thead>
@@ -76,4 +78,3 @@
       </tr>
     </tbody>
 </div>
- 
