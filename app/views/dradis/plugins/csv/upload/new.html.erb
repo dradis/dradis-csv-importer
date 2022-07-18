@@ -56,7 +56,7 @@
                   <option>Field form RTP</option>
                   <option>Another from RTP</option>
                   <option disabled>&#9472;</option>
-                  <option>Create **COLUMN NAME GOES HERE** field</option>
+                  <option>Create <%= header %> field</option>
                   <option>Do not import this column</option>
                 </select>
                 <label for="field_0" class="sr-only">Field in Dradis</label>
@@ -72,7 +72,7 @@
               </div>
             </td>
           <%# else %>
-            <%# <td>**COLUMN NAME GOES HERE**</td> %>
+            <%# <td><%= header ></td> %>
           <%# end %>
         </tr>
       <% end %>
