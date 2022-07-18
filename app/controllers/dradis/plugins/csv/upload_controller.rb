@@ -7,6 +7,7 @@ module Dradis::Plugins::CSV
     end
 
     def create
+      redirect_to main_app.project_upload_manager_path(current_project)
     end
 
     private

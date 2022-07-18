@@ -30,7 +30,7 @@
               <tr>
                 <td>
                   <div class="form-check">
-                    <%= f.radio_button "identifier[#{index}][]", true, class: 'form-check-input' %>
+                    <%= f.radio_button 'identifier', index, class: 'form-check-input' %>
                     <%= f.label :identifier, class: 'form-check-label' do %>
                       <span class="sr-only">Select</span>
                     <% end %>
@@ -39,7 +39,7 @@
                 <td><%= header %></td>
                 <td>
                   <div class="form-group m-0">
-                    <%= f.select "type[#{index}][]", ['Issue', 'Evidence', 'Node'], {}, class: 'form-control custom-select'%>
+                    <%= f.select "mappings[#{index}][type]", ['Issue', 'Evidence', 'Node'], {}, class: 'form-control custom-select'%>
                   </div>
                 </td>
               </tr>
