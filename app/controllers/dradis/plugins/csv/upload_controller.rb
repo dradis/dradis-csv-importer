@@ -6,6 +6,9 @@ module Dradis::Plugins::CSV
       parse_csv
     end
 
+    def create
+    end
+
     private
 
     def parse_csv
