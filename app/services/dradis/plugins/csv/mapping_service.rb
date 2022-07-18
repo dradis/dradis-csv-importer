@@ -6,12 +6,13 @@ module Dradis::Plugins::CSV
       def import(params = {})
         @csv_id_column = params[:csv_id_column]
         @evidence_mappings = params[:evidence_mappings]
+        @file = params[:file]
         @issue_mappings = params[:issue_mappings]
         @node_column = params[:node_column]
         @project = params[:project]
 
         begin
-          CSV.foreach(params[:file], headers: true) do |row|
+          CSV.foreach(@file, headers: true) do |row|
             process_row(row)
           end
           # logger.info{ "CSV processed." }

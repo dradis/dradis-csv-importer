@@ -13,15 +13,13 @@ module Dradis::Plugins::CSV
 
     def create
       MappingService.import(
-        project: Project.find(params[:project_id]),
+        csv_id_column: mappings_params[:csv_id_column_name],
+        evidence_mappings: mappings_params[:evidence_mappings],
         file: Rails.root.join('HOLM-INFRA.csv'),
         issue_mappings: mappings_params[:issue_mappings],
-        evidence_mappings: mappings_params[:evidence_mappings],
-        csv_id_column: mappings_params[:csv_id_column_name],
-        node_column: mappings_params[:node_column_name]
+        node_column: mappings_params[:node_column_name],
+        project: Project.find(params[:project_id])
       )
-
-
     end
 
     private
