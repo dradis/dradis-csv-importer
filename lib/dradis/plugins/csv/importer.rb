@@ -5,7 +5,7 @@ module Dradis::Plugins::CSV
     end
 
     def import(params={})
-      logger.info { 'Parsing CSV file...' }
+      logger.info { 'Uploading CSV file...' }
 
       uid = @logger.uid
 
