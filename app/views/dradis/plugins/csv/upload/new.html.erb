@@ -12,8 +12,6 @@
 <% end %>
 
 <div class="content-container">
-  <%= "Uploaded file: #{@attachment.filename}" %>
-
   <table class="table table-striped mb-0"
     data-behavior="dradis-datatable"
     data-item-name="csv_item"
@@ -31,50 +29,52 @@
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="unique_indentifiers" id="unique_indentifier_0" value="0" checked>
-            <label class="form-check-label" for="unique_indentifier_0"><span class="sr-only">Select</span></label>
-          </div>
-        </td>
-        <td>**COLUMN NAME GOES HERE**</td>
-        <td>
-          <div class="form-group m-0">
-            <select class="form-control custom-select" id="type_0">
-              <option selected>Issue</option>
-              <option>Evidence</option>
-              <option>Node</option>
-            </select>
-            <label for="type_0" class="sr-only">Type</label>
-          </div>
-        </td>
-        <%# if RTP && RTP has fields defined %>
+      <% @headers.each do |header| %>
+        <tr>
+          <td>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="unique_indentifiers" id="unique_indentifier_0" value="0" checked>
+              <label class="form-check-label" for="unique_indentifier_0"><span class="sr-only">Select</span></label>
+            </div>
+          </td>
+          <td><%= header %></td>
           <td>
             <div class="form-group m-0">
-              <select class="form-control custom-select" id="field_0">
-                <option disabled selected>Select a Field</option>
-                <option>Field form RTP</option>
-                <option>Another from RTP</option>
-                <option disabled>&#9472;</option>
-                <option>Create **COLUMN NAME GOES HERE** field</option>
-                <option>Do not import this column</option>
+              <select class="form-control custom-select" id="type_0">
+                <option selected>Issue</option>
+                <option>Evidence</option>
+                <option>Node</option>
               </select>
-              <label for="field_0" class="sr-only">Field in Dradis</label>
+              <label for="type_0" class="sr-only">Type</label>
             </div>
           </td>
-          <td>
-            <div class="validation">
-              <%# if error %>
-                <i class="fa fa-times fa-fw ml-4" data-toggle="tooltip" data-original-title="Error message goes here"></i>
-              <%# else %>
-                <%# <i class="fa fa-check fa-fw ml-4" data-toggle="tooltip" data-original-title="Validation passed!"></i> %>
-              <%# end %>
-            </div>
-          </td>
-        <%# else %>
-          <%# <td>**COLUMN NAME GOES HERE**</td> %>
-        <%# end %>
-      </tr>
+          <%# if RTP && RTP has fields defined %>
+            <td>
+              <div class="form-group m-0">
+                <select class="form-control custom-select" id="field_0">
+                  <option disabled selected>Select a Field</option>
+                  <option>Field form RTP</option>
+                  <option>Another from RTP</option>
+                  <option disabled>&#9472;</option>
+                  <option>Create **COLUMN NAME GOES HERE** field</option>
+                  <option>Do not import this column</option>
+                </select>
+                <label for="field_0" class="sr-only">Field in Dradis</label>
+              </div>
+            </td>
+            <td>
+              <div class="validation">
+                <%# if error %>
+                  <i class="fa fa-times fa-fw ml-4" data-toggle="tooltip" data-original-title="Error message goes here"></i>
+                <%# else %>
+                  <%# <i class="fa fa-check fa-fw ml-4" data-toggle="tooltip" data-original-title="Validation passed!"></i> %>
+                <%# end %>
+              </div>
+            </td>
+          <%# else %>
+            <%# <td>**COLUMN NAME GOES HERE**</td> %>
+          <%# end %>
+        </tr>
+      <% end %>
     </tbody>
 </div>
