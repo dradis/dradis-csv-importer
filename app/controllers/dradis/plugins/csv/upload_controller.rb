@@ -3,10 +3,7 @@ module Dradis::Plugins::CSV
     include ProjectScoped
 
     def new
-      @default_columns = ['Unique Identifier', 'Column Header', 'Type']
-      if current_project.report_template_properties
-        @default_columns | ['Dradis Field']
-      end
+      @default_columns = ['Unique Identifier', 'Column Header From File', 'Type', 'Field in Dradis']
 
       parse_csv
     end
