@@ -9,7 +9,12 @@ module Dradis::Plugins::CSV
     end
 
     def create
-      redirect_to main_app.project_upload_manager_path(current_project)
+      MappingService.import(
+        identifier_col_index: mappings_params[:identifier],
+        mappings: mappings_params[:mappings],
+        file: Rails.root.join('HOLM-INFRA.csv'),
+        project: Project.find(params[:project_id])
+      )
     end
 
     private
@@ -22,24 +27,9 @@ module Dradis::Plugins::CSV
       @headers = ::CSV.open(attachment.fullpath, &:readline)
     end
 
-    def create
-      MappingService.import(
-        csv_id_column: mappings_params[:csv_id_column_name],
-        evidence_mappings: mappings_params[:evidence_mappings],
-        file: Rails.root.join('HOLM-INFRA.csv'),
-        issue_mappings: mappings_params[:issue_mappings],
-        node_column: mappings_params[:node_column_name],
-        project: Project.find(params[:project_id])
-      )
-    end
-
-    private
-
     def mappings_params
       params.permit(
-        :csv_id_column_name, :node_column_name,
-        evidence_mappings: [:column_name, :field_name],
-        issue_mappings: [:column_name, :field_name]
+        :identifier, mappings: [:type]
       )
     end
   end
