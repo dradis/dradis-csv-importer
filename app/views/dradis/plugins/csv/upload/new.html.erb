@@ -43,7 +43,7 @@
                 <td><%= header %></td>
                 <td>
                   <div class="form-group m-0">
-                    <%= f.select "mappings[#{index}][type]", ['Issue Field', 'Evidence Field', 'Node Label'], {}, class: 'form-control custom-select'%>
+                    <%= f.select "mappings[#{index}][type]", ['Issue Field', 'Evidence Field', 'Node Label'], {}, class: 'form-control custom-select', data: { behavior: 'type-select' } %>
                   </div>
                 </td>
                 <% if current_project.report_template_properties %>
