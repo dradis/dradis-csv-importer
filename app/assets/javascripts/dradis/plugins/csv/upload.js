@@ -25,10 +25,16 @@ document.addEventListener('turbolinks:load', function() {
       $('[data-behavior~=type-select]').each(function(i, select) {
         if ($(select).is($changedSelect)) { return; }
 
+        var $parentRow = $changedSelect.parents('tr');
+
         if (($changedSelect).val() == 'Node Label') {
           $(select).find('option[value="Node Label"]').attr('disabled', 'disabled');
+          $parentRow.find('[data-behavior~=default-field-label]').addClass('d-none');
+          $parentRow.find('[data-behavior~=na-field-label').removeClass('d-none');
         } else if ($changedSelect.attr('data-original-value') == 'Node Label') {
           $(select).find('option[value="Node Label"]').removeAttr('disabled');
+          $parentRow.find('[data-behavior~=default-field-label]').removeClass('d-none');
+          $parentRow.find('[data-behavior~=na-field-label').addClass('d-none');
         }
       });
     });
