@@ -15,22 +15,24 @@ window.addEventListener('job-done', function(e){
 
 document.addEventListener('turbolinks:load', function() {
   if ($('body.upload.new').length) {
-    function findNodeSelect() {
-      return $('[data-behavior~=type-select]').toArray().find(function(typeSelect) {
-        return typeSelect.value == 'Node Label';
-      });
-    }
-    
-    $('[data-behavior~=type-select]').on('change', function() {
-      var $nodeSelect = $(findNodeSelect());
+    $('[data-behavior=type-select]').on('change', function() {
+      var $nodeSelect = $('select option[value="node"]:selected').parent();
 
-      $('[data-behavior~=type-select]').each(function(i, select) {
+      $('[data-behavior=type-select]').each(function(i, select) {
+        var $tr = $(select).closest('tr');
+
+        $tr.find('[data-behavior=na-field-label]').addClass('d-none');
+        $tr.find('[data-behavior=default-field-label]').removeClass('d-none');
+
         if ($nodeSelect.length && !$nodeSelect.is($(select))) {
-          $(select).find('option[value="Node Label"]').attr('disabled', 'disabled');
+          $(select).find('option[value="node"]').attr('disabled', 'disabled');
         } else {
-          $(select).find('option[value="Node Label"]').removeAttr('disabled');
+          $(select).find('option[value="node"]').removeAttr('disabled');
         }
       });
+
+      $nodeSelect.closest('tr').find('[data-behavior=na-field-label]').removeClass('d-none');
+      $nodeSelect.closest('tr').find('[data-behavior=default-field-label]').addClass('d-none');
     });
   }
 });
