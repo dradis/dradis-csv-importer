@@ -15,13 +15,14 @@
   <%= form_with url: project_upload_index_path(current_project), method: :post do |f| %>
     <table class="table table-striped mb-0"
       data-behavior="dradis-datatable"
+      data-default-columns="['Unique Identifier', 'Column Header', 'Type']"
       data-item-name="csv_item"
       data-local-storage-key="project.ce.<%= dom_id(current_project) %>.csv_mapping_datatable"
     >
       <thead>
         <tr>
-          <th class="no-sort">Unique Indentifier</th>
-          <th>Column Header From File</th>
+          <th class="no-sort">Unique Identifier</th>
+          <th>Column Header</th>
           <th>Type</th>
         </tr>
       </thead>
