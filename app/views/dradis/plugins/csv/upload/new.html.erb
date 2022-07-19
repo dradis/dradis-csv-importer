@@ -15,7 +15,7 @@
   <%= form_with url: project_upload_index_path(current_project), method: :post do |f| %>
     <table class="table table-striped mb-0"
       data-behavior="dradis-datatable"
-      data-default-columns="['Unique Identifier', 'Column Header', 'Type']"
+      data-default-columns="<%= @default_columns %>"
       data-item-name="csv_item"
       data-local-storage-key="project.ce.<%= dom_id(current_project) %>.csv_mapping_datatable"
     >
@@ -24,6 +24,9 @@
           <th class="no-sort">Unique Identifier</th>
           <th>Column Header</th>
           <th>Type</th>
+          <% if current_project.report_template_properties %>
+            <th> Dradis Field </th>
+          <% end %>
         </tr>
       </thead>
           <tbody>
@@ -43,6 +46,13 @@
                     <%= f.select "mappings[#{index}][type]", ['Issue Field', 'Evidence Field', 'Node Label'], {}, class: 'form-control custom-select'%>
                   </div>
                 </td>
+                <% if current_project.report_template_properties %>
+                  <td>
+                    <div class="form-group m-0">
+                      <%= f.text_field "mappings[#{index}][field]", class: 'form-control' %>
+                    </div>
+                  </td>
+                <% end %>
               </tr>
             <% end %>
         </tbody>
