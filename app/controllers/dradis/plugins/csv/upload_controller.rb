@@ -3,24 +3,35 @@ module Dradis::Plugins::CSV
     include ProjectScoped
 
     # skip_before_action :login_required, :ensure_tester, :setup_required, :verify_authenticity_token, :set_project, :set_nodes, :render_onboarding_tour, only: [:create]
-    before_action :load_attachment, only: [:new]
+    before_action :load_attachment, only: [:new, :create]
 
     def new
       @default_columns = ['Unique Identifier', 'Column Header From File', 'Type', 'Field in Dradis']
 
       @headers = ::CSV.open(@attachment.fullpath, &:readline)
+
+      @last_job = Log.new.uid
     end
 
     def create
-      MappingService.import(
+      job_logger.write 'Enqueueing job to start in the background.'
+
+      MappingImportJob.perform_later(
+        file: @attachment.fullpath.to_s,
         identifier_col_index: mappings_params[:identifier],
-        mappings: mappings_params[:mappings],
-        file: Rails.root.join('HOLM-INFRA.csv'),
-        project: Project.find(params[:project_id])
+        mappings: mappings_params[:mappings].to_h,
+        project_id: current_project.id,
+        uid: params[:item_id].to_i
       )
+
+      head :ok
     end
 
     private
+
+    def job_logger
+      @job_logger ||= Log.new(uid: params[:item_id].to_i)
+    end
 
     def load_attachment
       job_id = params[:job_id].to_i
@@ -30,7 +41,7 @@ module Dradis::Plugins::CSV
 
     def mappings_params
       params.permit(
-        :identifier, mappings: [:type]
+        :identifier, mappings: [:field, :type]
       )
     end
   end
