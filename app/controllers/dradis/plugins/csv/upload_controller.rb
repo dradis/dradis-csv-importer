@@ -2,10 +2,13 @@ module Dradis::Plugins::CSV
   class UploadController < ::AuthenticatedController
     include ProjectScoped
 
-    skip_before_action :login_required, :ensure_tester, :setup_required, :verify_authenticity_token, :set_project, :set_nodes, :render_onboarding_tour, only: [:create]
+    # skip_before_action :login_required, :ensure_tester, :setup_required, :verify_authenticity_token, :set_project, :set_nodes, :render_onboarding_tour, only: [:create]
+    before_action :load_attachment, only: [:new]
 
     def new
-      parse_csv
+      @default_columns = ['Unique Identifier', 'Column Header From File', 'Type', 'Field in Dradis']
+
+      @headers = ::CSV.open(@attachment.fullpath, &:readline)
     end
 
     def create
@@ -19,12 +22,10 @@ module Dradis::Plugins::CSV
 
     private
 
-    def parse_csv
+    def load_attachment
       job_id = params[:job_id].to_i
       filename = Resque.redis.get(job_id)
-      attachment = Attachment.find(filename, conditions: { node_id: current_project.plugin_uploads_node.id })
-
-      @headers = ::CSV.open(attachment.fullpath, &:readline)
+      @attachment = Attachment.find(filename, conditions: { node_id: current_project.plugin_uploads_node.id })
     end
 
     def mappings_params
