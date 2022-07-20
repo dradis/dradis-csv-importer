@@ -31,36 +31,36 @@
           <th>Field in Dradis</th>
         </tr>
       </thead>
-          <tbody>
-            <% @headers.each_with_index do |header, index| %>
-              <tr>
-                <td>
-                  <div class="form-check">
-                    <%= f.radio_button 'identifier', index, class: 'form-check-input' %>
-                    <%= f.label :identifier, class: 'form-check-label' do %>
-                      <span class="sr-only">Select</span>
-                    <% end %>
-                  </div>
-                </td>
-                <td><%= header %></td>
-                <td>
-                  <div class="form-group m-0">
-                    <%= f.select "mappings[#{index}][type]", [['Issue Field', 'issue'], ['Evidence Field', 'evidence'], ['Node Label', 'node']], {}, class: 'form-control custom-select w-75', data: { behavior: 'type-select' } %>
-                  </div>
-                </td>
-                <td>
-                  <% if current_project.report_template_properties %>
-                    <div class="form-group m-0">
-                      <%= f.text_field "mappings[#{index}][field]", class: 'form-control' %>
-                    </div>
-                  <% else %>
-                    <span data-behavior="default-field-label"><%= header %></span>
-                    <span data-behavior="na-field-label" class="d-none">N/A</span>
-                  <% end %>
-                </td>
-              </tr>
-            <% end %>
-        </tbody>
+      <tbody>
+        <% @headers.each_with_index do |header, index| %>
+          <tr>
+            <td>
+              <div class="form-check">
+                <%= f.radio_button 'identifier', index, class: 'form-check-input' %>
+                <%= f.label :identifier, class: 'form-check-label' do %>
+                  <span class="sr-only">Select</span>
+                <% end %>
+              </div>
+            </td>
+            <td><%= header %></td>
+            <td>
+              <div class="form-group m-0">
+                <%= f.select "mappings[#{index}][type]", [['Issue Field', 'issue'], ['Evidence Field', 'evidence'], ['Node Label', 'node']], {}, class: 'form-control custom-select w-75', data: { behavior: 'type-select' } %>
+              </div>
+            </td>
+            <td>
+              <% if current_project.report_template_properties %>
+                <div class="form-group m-0">
+                  <%= f.text_field "mappings[#{index}][field]", class: 'form-control' %>
+                </div>
+              <% else %>
+                <span data-behavior="default-field-label"><%= header %></span>
+                <span data-behavior="na-field-label" class="d-none">N/A</span>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
     </table>
     <div class="form-actions">
       <%= f.submit 'Import CSV', class: 'btn btn-primary mr-1' %> or
