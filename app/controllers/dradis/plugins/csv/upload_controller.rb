@@ -2,7 +2,6 @@ module Dradis::Plugins::CSV
   class UploadController < ::AuthenticatedController
     include ProjectScoped
 
-    # skip_before_action :login_required, :ensure_tester, :setup_required, :verify_authenticity_token, :set_project, :set_nodes, :render_onboarding_tour, only: [:create]
     before_action :load_attachment, only: [:new, :create]
 
     def new
@@ -40,9 +39,7 @@ module Dradis::Plugins::CSV
     end
 
     def mappings_params
-      params.permit(
-        :identifier, mappings: [:field, :type]
-      )
+      params.permit(:identifier, mappings: [:field, :type])
     end
   end
 end

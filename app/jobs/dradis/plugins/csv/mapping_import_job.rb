@@ -36,8 +36,8 @@ module Dradis::Plugins::CSV
     end
 
     def import_csv!
-      @issue_mappings = @mappings.select { |index, mapping| mapping['type'] == 'issue' && mapping['field'].present? }
-      @evidence_mappings = @mappings.select { |index, mapping| mapping['type'] == 'evidence' && mapping['field'].present? }
+      @issue_mappings = @mappings.select { |index, mapping| mapping['type'] == 'issue' }
+      @evidence_mappings = @mappings.select { |index, mapping| mapping['type'] == 'evidence' }
 
       CSV.foreach(@file, headers: true) do |row|
         process_row(row)
@@ -57,8 +57,8 @@ module Dradis::Plugins::CSV
       if node_label
         node = content_service.create_node(label: node_label, type: :host)
         @logger.info{ "\t => Creating new evidence (plugin_id: #{identifier})" }
-        @logger.info { "\t\t => Issue: #{issue.title} (plugin_id: #{issue.to_issue.id})" }
-        @logger.info { "\t\t => Node: #{node.label} (#{node.id})" }
+        @logger.info { "\t\t => Issue: #{issue.title} (issue_id: #{issue.to_issue.id})" }
+        @logger.info { "\t\t => Node: #{node.label} (node_id: #{node.id})" }
 
         evidence_content = build_text(mappings: @evidence_mappings, row: row)
         content_service.create_evidence(issue: issue, node: node, content: evidence_content)
@@ -67,10 +67,16 @@ module Dradis::Plugins::CSV
 
     def build_text(mappings:, row:)
       mappings.map do |index, mapping|
-        field_name = mapping['field']
+        next if rtp_import? && mapping['field'].blank?
+
+        field_name = rtp_import? ? mapping['field'] : row.headers[index.to_i]
         field_value = row[index.to_i]
         "#[#{field_name}]#\n#{field_value}"
-      end.join("\n\n")
+      end.compact.join("\n\n")
+    end
+
+    def rtp_import?
+      @mappings.all? { |index, mapping| mapping.keys.include?('field') }
     end
   end
 end
