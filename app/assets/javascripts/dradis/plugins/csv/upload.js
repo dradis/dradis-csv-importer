@@ -15,9 +15,10 @@ window.addEventListener('job-done', function(e){
 
 document.addEventListener('turbolinks:load', function() {
   if ($('body.upload.new').length) {
-    $('[data-behavior=type-select]').on('change', function() {
+    $('[data-behavior=type-select]').on('change', function(e) {
       var $nodeSelect = $('select option[value="node"]:selected').parent();
 
+      // Disable Node Label option and update fields column labels
       $('[data-behavior=type-select]').each(function(i, select) {
         var $tr = $(select).closest('tr');
 
@@ -30,9 +31,22 @@ document.addEventListener('turbolinks:load', function() {
           $(select).find('option[value="node"]').removeAttr('disabled');
         }
       });
-
       $nodeSelect.closest('tr').find('[data-behavior=na-field-label]').removeClass('d-none');
       $nodeSelect.closest('tr').find('[data-behavior=default-field-label]').addClass('d-none');
+
+      // Update the field select with the one from the RTP
+      var rtpFields = $('[data-behavior=dradis-datatable]').data('rtp-fields');
+      if (rtpFields) {
+        var fields = rtpFields[$(e.target).val()],
+            $fieldSelect = $(e.target).closest('tr').find('[data-behavior=field-select]');
+
+        $fieldSelect.empty();
+        if (fields) {
+          fields.forEach(function(value) {
+            $fieldSelect.append($('<option></option>').attr('value', value).text(value));
+          });
+        }
+      }
     });
   }
 });

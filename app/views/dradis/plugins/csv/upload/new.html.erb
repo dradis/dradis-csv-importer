@@ -19,6 +19,7 @@
       data-default-columns="<%= @default_columns %>"
       data-item-name="csv_item"
       data-paging="false"
+      data-rtp-fields="<%= @rtp_fields.to_json %>"
     >
       <thead>
         <tr>
@@ -46,9 +47,9 @@
                   </div>
                 </td>
                 <td>
-                  <% if current_project.report_template_properties %>
+                  <% if @rtp_fields %>
                     <div class="form-group m-0">
-                      <%= f.text_field "mappings[#{index}][field]", class: 'form-control' %>
+                      <%= f.select "mappings[#{index}[field]", options_for_select(@rtp_fields[:issue]), {}, class: 'form-control custom-select w-75', data: { behavior: 'field-select' } %>
                     </div>
                   <% else %>
                     <span data-behavior="default-field-label"><%= header %></span>
