@@ -24,8 +24,6 @@ module Dradis::Plugins::CSV
       )
 
       Resque.redis.del(params[:job_id])
-
-      head :ok
     end
 
     private

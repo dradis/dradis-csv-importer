@@ -35,44 +35,23 @@ document.addEventListener('turbolinks:load', function() {
       $nodeSelect.closest('tr').find('[data-behavior=default-field-label]').addClass('d-none');
     });
 
-    $('[data-behavior~=mapping-form]').on('ajax:before', function() {
-      $('#console').empty();
-      $('#result').show();
-    });
-
-    $('[data-behavior~=mapping-form]').on('ajax:complete', function() {
-      ConsoleUpdater.parsing = true;
-      setTimeout(ConsoleUpdater.updateConsole, 1000);
-    });
-
     $('[data-behavior~=mapping-form]').submit(function() {
-      var valid = validateUniqueId() && validateNodeSelected();
+      var valid = validateNodeSelected();
 
       if (!valid) {
         $(this).find('input[type="submit"]').attr('disabled', false).val('Import CSV');
 
         $('[data-behavior~=view-content]').animate({
-          scrollTop: $('[data-behavior~=mapping-validation-messages]').scrollTop()
+          scrollTop: $('[data-behavior~=node-type-validation-message]').scrollTop()
         });
       }
 
       return valid;
     });
 
-    function validateUniqueId() {
-      $('[data-behavior~=unique-id-validation-message]').addClass('d-none');
-
-      var valid = $('[data-behavior~=identifier]').is(':checked');
-
-      if (!valid) {
-        $('[data-behavior~=unique-id-validation-message]').removeClass('d-none');
-      }
-
-      return valid;
-    }
-
     function validateNodeSelected() {
-      $('[data-behavior~=node-type-validation-message]').addClass('d-none');
+      var $validationMessage = $('[data-behavior~=node-type-validation-message]');
+      $validationMessage.addClass('d-none');
 
       var selectedEvidenceCount = $('select option[value="evidence"]:selected').length;
       var selectedNodeCount = $('select option[value="node"]:selected').length;
@@ -81,7 +60,7 @@ document.addEventListener('turbolinks:load', function() {
                    (selectedEvidenceCount > 0 && selectedNodeCount > 0);
 
       if (!valid) {
-        $('[data-behavior~=node-type-validation-message]').removeClass('d-none');
+        $validationMessage.removeClass('d-none');
       }
 
       return valid;
