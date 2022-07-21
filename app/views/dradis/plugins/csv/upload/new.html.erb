@@ -73,7 +73,7 @@
       </tbody>
     </table>
     <div class="form-actions">
-      <%= f.submit 'Import CSV', class: 'btn btn-primary mr-1' %> or
+      <%= f.submit 'Import CSV', class: 'btn btn-primary mr-1', data: { disable_with: false } %> or
       <%= link_to 'Cancel', main_app.project_upload_manager_path(current_project) %>
     </div>
   <% end %>
