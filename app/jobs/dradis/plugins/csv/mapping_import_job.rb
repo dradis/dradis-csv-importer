@@ -1,5 +1,3 @@
-require 'csv'
-
 module Dradis::Plugins::CSV
   class MappingImportJob < ApplicationJob
     queue_as :dradis_project

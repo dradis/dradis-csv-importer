@@ -102,4 +102,3 @@ RSpec.describe Dradis::Plugins::CSV::MappingImportJob do
     end
   end
 end
-
