@@ -77,12 +77,8 @@
   <div class="content-container mt-0">
     <h4 class="header-underline">Output console</h4>
     <div id="status"></div>
-    <%= content_tag :div, id: 'result', style: 'display:none', data: { url: main_app.status_console_index_path, id: @log_uid }  do %>
+    <%= content_tag :div, id: 'result', style: 'display:none', data: { url: main_app.status_console_index_path }  do %>
       <div id="console" class="mx-0 mb-0"></div>
     <% end %>
   </div>
 </div>
-
-<script type="text/javascript" charset="utf-8">
-  ConsoleUpdater.jobId = <%= @log_uid %>;
-</script>
