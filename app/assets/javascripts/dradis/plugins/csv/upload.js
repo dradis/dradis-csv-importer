@@ -110,11 +110,18 @@ document.addEventListener('turbolinks:load', function() {
       if (fields.length > 0) {
         $fieldSelect.empty();
         fields.forEach(function(value) {
-          $fieldSelect.append($('<option></option>').attr('value', value).text(value));
+          $fieldSelect
+            .removeAttr('disabled')
+            .append($('<option></option>')
+            .attr('value', value)
+            .text(value));
         });
-      }
-      else {
-        $fieldSelect.html($('<option disabled="disabled" selected></option>').attr('value', '').text('N/A'));
+      } else {
+        $fieldSelect
+          .attr('disabled', 'disabled')
+          .html($('<option selected></option>')
+          .attr('value', '')
+          .text('N/A'));
       }
     }
   }
