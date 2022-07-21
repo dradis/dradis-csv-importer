@@ -39,7 +39,9 @@ describe 'upload feature', js: true do
       context 'when identifier not selected' do
         it 'shows a validation message on the page' do
           click_button 'Import CSV'
-          expect(page).to have_text('A Unique identifier must be selected.')
+
+          message = page.find('#identifier_0').native.attribute('validationMessage')
+          expect(message).to eq('Please select one of these options.')
         end
       end
 
