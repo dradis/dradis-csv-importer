@@ -27,7 +27,7 @@ module Dradis::Plugins::CSV
       @mappings = mappings
       @project = Project.find(project_id)
 
-      # hash#find returns converts a hash into an array,
+      # hash#find converts a hash into an array,
       # e.g. { '0' => { 'type' => 'node' } } to # ['0', { 'type' => 'node' }].
       @node_index =
         if node_mapping = @mappings.find { |index, field| field['type'] == 'node' }
