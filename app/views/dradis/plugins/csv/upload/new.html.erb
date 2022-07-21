@@ -12,8 +12,18 @@
 <% end %>
 
 <div class="content-container">
-  <%= form_with url: project_upload_index_path(current_project), method: :post, remote: true, data: { behavior: 'mapping-form' } do |f| %>
-    <%= hidden_field_tag 'item_id' %>
+  <div data-behavior="mapping-validation-messages">
+    <div class="alert alert-danger d-none" data-behavior="unique-id-validation-message">
+      A Unique identifier must be selected.
+    </div>
+
+    <div class="alert alert-danger d-none" data-behavior="node-type-validation-message">
+      A Node Label Type must be selected to import evidence records.
+    </div>
+  </div>
+
+  <%= form_with url: project_upload_index_path(current_project), method: :post, data: { behavior: 'mapping-form' } do |f| %>
+    <%= hidden_field_tag 'log_uid', @log_uid %>
     <%= hidden_field_tag 'job_id', params[:job_id] %>
 
     <table class="table table-striped mb-0"
@@ -37,7 +47,7 @@
           <tr>
             <td>
               <div class="form-check">
-                <%= f.radio_button 'identifier', index, class: 'form-check-input' %>
+                <%= f.radio_button 'identifier', index, class: 'form-check-input', data: { behavior: 'identifier' } %>
                 <%= f.label :identifier, class: 'form-check-label' do %>
                   <span class="sr-only">Select</span>
                 <% end %>
@@ -75,12 +85,12 @@
   <div class="content-container mt-0">
     <h4 class="header-underline">Output console</h4>
     <div id="status"></div>
-    <%= content_tag :div, id: 'result', style: 'display:none', data: { url: main_app.status_console_index_path }  do %>
+    <%= content_tag :div, id: 'result', style: 'display:none', data: { url: main_app.status_console_index_path, id: @log_uid }  do %>
       <div id="console" class="mx-0 mb-0"></div>
     <% end %>
   </div>
 </div>
 
 <script type="text/javascript" charset="utf-8">
-  ConsoleUpdater.jobId = <%= @last_job %>;
+  ConsoleUpdater.jobId = <%= @log_uid %>;
 </script>

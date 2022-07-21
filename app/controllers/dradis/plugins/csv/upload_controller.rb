@@ -9,7 +9,7 @@ module Dradis::Plugins::CSV
       @default_columns = ['Unique Identifier', 'Column Header From File', 'Type', 'Field in Dradis']
       @headers = ::CSV.open(@attachment.fullpath, &:readline)
 
-      @last_job = Log.new.uid
+      @log_uid = Log.new.uid + 1
     end
 
     def create
@@ -17,11 +17,13 @@ module Dradis::Plugins::CSV
 
       MappingImportJob.perform_later(
         file: @attachment.fullpath.to_s,
-        identifier_col_index: mappings_params[:identifier],
+        id_index: mappings_params[:identifier],
         mappings: mappings_params[:mappings].to_h,
         project_id: current_project.id,
-        uid: params[:item_id].to_i
+        uid: params[:log_uid].to_i
       )
+
+      Resque.redis.del(params[:job_id])
 
       head :ok
     end
@@ -29,7 +31,7 @@ module Dradis::Plugins::CSV
     private
 
     def job_logger
-      @job_logger ||= Log.new(uid: params[:item_id].to_i)
+      @job_logger ||= Log.new(uid: params[:log_uid].to_i)
     end
 
     def load_rtp_fields
@@ -46,6 +48,11 @@ module Dradis::Plugins::CSV
     def load_attachment
       job_id = params[:job_id].to_i
       filename = Resque.redis.get(job_id)
+
+      unless filename
+        return redirect_to main_app.project_upload_manager_path
+      end
+
       @attachment = Attachment.find(filename, conditions: { node_id: current_project.plugin_uploads_node.id })
     end
 

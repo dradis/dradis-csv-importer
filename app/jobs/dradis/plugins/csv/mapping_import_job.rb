@@ -1,25 +1,38 @@
-require 'csv'
-
 module Dradis::Plugins::CSV
   class MappingImportJob < ApplicationJob
     queue_as :dradis_project
 
-    def perform(file:, identifier_col_index:, mappings:, project_id:, uid:)
+    # mappings hash:
+    # The key is the column index, with a hash containing the type of resource (evidence/issue/node)
+    # its supposed to map to and the dradis field for the resource (only for evidence and issues).
+    #
+    # e.g.
+    # {
+    # '0' => { 'type' => 'node' },
+    # '1' => { 'type' => 'issue', field: 'Title' },
+    # '2' => { 'type' => 'evidence', field: 'Port' }
+    # }
+    def perform(file:, id_index:, mappings:, project_id:, uid:)
       @logger = Log.new(uid: uid)
       @logger.write { "Job id is #{job_id}." }
       @logger.write { 'Worker process starting background task.' }
 
-      @file = file
-      @identifier_col_index = identifier_col_index
-      @mappings = mappings
-      @project = Project.find(project_id)
-      node_col_mapping = @mappings.find { |index, field| field['type'] == 'node' }
-      @node_col_index = node_col_mapping[0].to_i if node_col_mapping
-
-      unless @identifier_col_index
+      unless id_index
         @logger.fatal('Unique Identifier doesn\'t exist, please choose a column as the Unique Identifier.')
         return
       end
+
+      @file = file
+      @id_index = id_index.to_i
+      @mappings = mappings
+      @project = Project.find(project_id)
+
+      # hash#find converts a hash into an array,
+      # e.g. { '0' => { 'type' => 'node' } } to # ['0', { 'type' => 'node' }].
+      @node_index =
+        if node_mapping = @mappings.find { |index, field| field['type'] == 'node' }
+          node_mapping.first.to_i
+        end
 
       import_csv!
 
@@ -45,38 +58,34 @@ module Dradis::Plugins::CSV
     end
 
     def process_row(row)
-      identifier = row[@identifier_col_index.to_i]
+      id = row[@id_index]
 
-      @logger.info { "\t => Creating new issue (plugin_id: #{ identifier })" }
-
+      @logger.info { "\t => Creating new issue (plugin_id: #{id})" }
       issue_text = build_text(mappings: @issue_mappings, row: row)
-      issue = content_service.create_issue(text: issue_text, id: identifier)
+      issue = content_service.create_issue(text: issue_text, id: id)
 
-      node_label = row[@node_col_index]
+      node_label = row[@node_index]
 
-      if node_label
+      if node_label.present?
+        @logger.info { "\t\t => Processing node: #{node_label}" }
         node = content_service.create_node(label: node_label, type: :host)
-        @logger.info{ "\t => Creating new evidence (plugin_id: #{identifier})" }
-        @logger.info { "\t\t => Issue: #{issue.title} (issue_id: #{issue.to_issue.id})" }
-        @logger.info { "\t\t => Node: #{node.label} (node_id: #{node.id})" }
 
-        evidence_content = build_text(mappings: @evidence_mappings, row: row)
-        content_service.create_evidence(issue: issue, node: node, content: evidence_content)
+        if @evidence_mappings.present?
+          @logger.info{ "\t\t => Creating evidence: (node: #{node_label}, plugin_id: #{id})" }
+          evidence_content = build_text(mappings: @evidence_mappings, row: row)
+          content_service.create_evidence(issue: issue, node: node, content: evidence_content)
+        end
       end
     end
 
     def build_text(mappings:, row:)
       mappings.map do |index, mapping|
-        next if rtp_import? && mapping['field'].blank?
+        next if @project.report_template_properties && mapping['field'].blank?
 
-        field_name = rtp_import? ? mapping['field'] : row.headers[index.to_i]
+        field_name = @project.report_template_properties ? mapping['field'] : row.headers[index.to_i]
         field_value = row[index.to_i]
         "#[#{field_name}]#\n#{field_value}"
       end.compact.join("\n\n")
-    end
-
-    def rtp_import?
-      @mappings.all? { |index, mapping| mapping.keys.include?('field') }
     end
   end
 end
