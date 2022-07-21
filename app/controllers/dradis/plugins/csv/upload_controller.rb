@@ -9,7 +9,7 @@ module Dradis::Plugins::CSV
 
       @headers = ::CSV.open(@attachment.fullpath, &:readline)
 
-      @last_job = Log.new.uid
+      @last_log = Log.new.uid
     end
 
     def create
@@ -20,7 +20,7 @@ module Dradis::Plugins::CSV
         id_index: mappings_params[:identifier],
         mappings: mappings_params[:mappings].to_h,
         project_id: current_project.id,
-        uid: params[:item_id].to_i
+        uid: params[:log_uid].to_i
       )
 
       head :ok
@@ -29,7 +29,7 @@ module Dradis::Plugins::CSV
     private
 
     def job_logger
-      @job_logger ||= Log.new(uid: params[:item_id].to_i)
+      @job_logger ||= Log.new(uid: params[:log_uid].to_i)
     end
 
     def load_attachment

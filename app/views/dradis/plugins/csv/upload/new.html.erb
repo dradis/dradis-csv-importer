@@ -23,7 +23,7 @@
   </div>
 
   <%= form_with url: project_upload_index_path(current_project), method: :post, data: { behavior: 'mapping-form' } do |f| %>
-    <%= hidden_field_tag 'item_id' %>
+    <%= hidden_field_tag 'log_uid' %>
     <%= hidden_field_tag 'job_id', params[:job_id] %>
 
     <table class="table table-striped mb-0"
@@ -90,5 +90,5 @@
 </div>
 
 <script type="text/javascript" charset="utf-8">
-  ConsoleUpdater.jobId = <%= @last_job %>;
+  ConsoleUpdater.jobId = <%= @last_log %>;
 </script>

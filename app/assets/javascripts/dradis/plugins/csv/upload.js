@@ -40,7 +40,7 @@ document.addEventListener('turbolinks:load', function() {
       $('#console').empty();
       $('#result').data('id', ConsoleUpdater.jobId);
       $('#result').show();
-      $('[data-behavior~=mapping-form]').find('#item_id').val(ConsoleUpdater.jobId);
+      $('[data-behavior~=mapping-form]').find('#log_uid').val(ConsoleUpdater.jobId);
     });
 
     $('[data-behavior~=mapping-form]').on('ajax:complete', function() {
