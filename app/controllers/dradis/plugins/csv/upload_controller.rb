@@ -23,6 +23,8 @@ module Dradis::Plugins::CSV
         uid: params[:log_uid].to_i
       )
 
+      Resque.redis.del(params[:job_id])
+
       head :ok
     end
 
@@ -35,6 +37,11 @@ module Dradis::Plugins::CSV
     def load_attachment
       job_id = params[:job_id].to_i
       filename = Resque.redis.get(job_id)
+
+      unless filename
+        return redirect_to main_app.project_upload_manager_path
+      end
+
       @attachment = Attachment.find(filename, conditions: { node_id: current_project.plugin_uploads_node.id })
     end
 
