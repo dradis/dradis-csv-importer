@@ -3,8 +3,8 @@ module Dradis::Plugins::CSV
     queue_as :dradis_project
 
     # mappings hash:
-    # The key is the column index, with a hash containing the type of resource (evidence/issue/node)
-    # its supposed to map to and the dradis field for the resource (only for evidence and issues).
+    # The key is the column index, while the value is a hash containing the type of resource (evidence/issue/node).
+    # It's used to map a CSV header to a field in Dradis (only for evidence and issues).
     #
     # e.g.
     # {
