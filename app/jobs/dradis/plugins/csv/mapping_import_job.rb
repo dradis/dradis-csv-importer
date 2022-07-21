@@ -60,20 +60,20 @@ module Dradis::Plugins::CSV
       id = row[@id_index]
 
       @logger.info { "\t => Creating new issue (plugin_id: #{id})" }
-
       issue_text = build_text(mappings: @issue_mappings, row: row)
       issue = content_service.create_issue(text: issue_text, id: id)
 
       node_label = row[@node_index]
 
-      if node_label
+      if node_label.present?
+        @logger.info { "\t\t => Processing node: #{node_label}" }
         node = content_service.create_node(label: node_label, type: :host)
-        @logger.info{ "\t => Creating new evidence (plugin_id: #{id})" }
-        @logger.info { "\t\t => Issue: #{issue.title} (issue_id: #{issue.to_issue.id})" }
-        @logger.info { "\t\t => Node: #{node.label} (node_id: #{node.id})" }
 
-        evidence_content = build_text(mappings: @evidence_mappings, row: row)
-        content_service.create_evidence(issue: issue, node: node, content: evidence_content)
+        if @evidence_mappings.present?
+          @logger.info{ "\t\t => Creating evidence: (node: #{node_label}, plugin_id: #{id})" }
+          evidence_content = build_text(mappings: @evidence_mappings, row: row)
+          content_service.create_evidence(issue: issue, node: node, content: evidence_content)
+        end
       end
     end
 

@@ -12,7 +12,17 @@
 <% end %>
 
 <div class="content-container">
-  <%= form_with url: project_upload_index_path(current_project), method: :post, remote: true, data: { behavior: 'mapping-form' } do |f| %>
+  <div data-behavior="mapping-validation-messages">
+    <div class="alert alert-danger d-none" data-behavior="unique-id-validation-message">
+      A Unique identifier must be selected.
+    </div>
+
+    <div class="alert alert-danger d-none" data-behavior="node-type-validation-message">
+      A Node Label Type must be selected to import evidence records.
+    </div>
+  </div>
+
+  <%= form_with url: project_upload_index_path(current_project), method: :post, data: { behavior: 'mapping-form' } do |f| %>
     <%= hidden_field_tag 'item_id' %>
     <%= hidden_field_tag 'job_id', params[:job_id] %>
 
@@ -36,7 +46,7 @@
           <tr>
             <td>
               <div class="form-check">
-                <%= f.radio_button 'identifier', index, class: 'form-check-input' %>
+                <%= f.radio_button 'identifier', index, class: 'form-check-input', data: { behavior: 'identifier' } %>
                 <%= f.label :identifier, class: 'form-check-label' do %>
                   <span class="sr-only">Select</span>
                 <% end %>

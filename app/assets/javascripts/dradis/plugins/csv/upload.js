@@ -47,5 +47,47 @@ document.addEventListener('turbolinks:load', function() {
       ConsoleUpdater.parsing = true;
       setTimeout(ConsoleUpdater.updateConsole, 1000);
     });
+
+    $('[data-behavior~=mapping-form]').submit(function() {
+      var valid = validateUniqueId() && validateNodeSelected();
+
+      if (!valid) {
+        $(this).find('input[type="submit"]').attr('disabled', false).val('Import CSV');
+
+        $('[data-behavior~=view-content]').animate({
+          scrollTop: $('[data-behavior~=mapping-validation-messages]').scrollTop()
+        });
+      }
+
+      return valid;
+    });
+
+    function validateUniqueId() {
+      $('[data-behavior~=unique-id-validation-message]').addClass('d-none');
+
+      var valid = $('[data-behavior~=identifier]').is(':checked');
+
+      if (!valid) {
+        $('[data-behavior~=unique-id-validation-message]').removeClass('d-none');
+      }
+
+      return valid;
+    }
+
+    function validateNodeSelected() {
+      $('[data-behavior~=node-type-validation-message]').addClass('d-none');
+
+      var selectedEvidenceCount = $('select option[value="evidence"]:selected').length;
+      var selectedNodeCount = $('select option[value="node"]:selected').length;
+
+      var valid =  selectedEvidenceCount == 0 ||
+                   (selectedEvidenceCount > 0 && selectedNodeCount > 0);
+
+      if (!valid) {
+        $('[data-behavior~=node-type-validation-message]').removeClass('d-none');
+      }
+
+      return valid;
+    }
   }
 });
