@@ -48,5 +48,18 @@ document.addEventListener('turbolinks:load', function() {
         }
       }
     });
+
+    $('[data-behavior~=mapping-form]').on('ajax:before', function() {
+      ConsoleUpdater.jobId = ConsoleUpdater.jobId + 1;
+      $('#console').empty();
+      $('#result').data('id', ConsoleUpdater.jobId);
+      $('#result').show();
+      $('[data-behavior~=mapping-form]').find('#item_id').val(ConsoleUpdater.jobId);
+    });
+
+    $('[data-behavior~=mapping-form]').on('ajax:complete', function() {
+      ConsoleUpdater.parsing = true;
+      setTimeout(ConsoleUpdater.updateConsole, 1000);
+    });
   }
 });

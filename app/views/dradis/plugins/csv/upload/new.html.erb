@@ -12,7 +12,10 @@
 <% end %>
 
 <div class="content-container">
-  <%= form_with url: project_upload_index_path(current_project), method: :post do |f| %>
+  <%= form_with url: project_upload_index_path(current_project), method: :post, remote: true, data: { behavior: 'mapping-form' } do |f| %>
+    <%= hidden_field_tag 'item_id' %>
+    <%= hidden_field_tag 'job_id', params[:job_id] %>
+
     <table class="table table-striped mb-0"
       data-behavior="dradis-datatable"
       data-column-toggle="false"
@@ -29,36 +32,36 @@
           <th>Field in Dradis</th>
         </tr>
       </thead>
-          <tbody>
-            <% @headers.each_with_index do |header, index| %>
-              <tr>
-                <td>
-                  <div class="form-check">
-                    <%= f.radio_button 'identifier', index, class: 'form-check-input' %>
-                    <%= f.label :identifier, class: 'form-check-label' do %>
-                      <span class="sr-only">Select</span>
-                    <% end %>
-                  </div>
-                </td>
-                <td><%= header %></td>
-                <td>
-                  <div class="form-group m-0">
-                    <%= f.select "mappings[#{index}][type]", [['Issue Field', 'issue'], ['Evidence Field', 'evidence'], ['Node Label', 'node']], {}, class: 'form-control custom-select w-75', data: { behavior: 'type-select' } %>
-                  </div>
-                </td>
-                <td>
-                  <% if @rtp_fields %>
-                    <div class="form-group m-0">
-                      <%= f.select "mappings[#{index}[field]", options_for_select(@rtp_fields[:issue]), {}, class: 'form-control custom-select w-75', data: { behavior: 'field-select' } %>
-                    </div>
-                  <% else %>
-                    <span data-behavior="default-field-label"><%= header %></span>
-                    <span data-behavior="na-field-label" class="d-none">N/A</span>
-                  <% end %>
-                </td>
-              </tr>
-            <% end %>
-        </tbody>
+      <tbody>
+        <% @headers.each_with_index do |header, index| %>
+          <tr>
+            <td>
+              <div class="form-check">
+                <%= f.radio_button 'identifier', index, class: 'form-check-input' %>
+                <%= f.label :identifier, class: 'form-check-label' do %>
+                  <span class="sr-only">Select</span>
+                <% end %>
+              </div>
+            </td>
+            <td><%= header %></td>
+            <td>
+              <div class="form-group m-0">
+                <%= f.select "mappings[#{index}][type]", [['Issue Field', 'issue'], ['Evidence Field', 'evidence'], ['Node Label', 'node']], {}, class: 'form-control custom-select w-75', data: { behavior: 'type-select' } %>
+              </div>
+            </td>
+            <td>
+              <% if current_project.report_template_properties %>
+                <div class="form-group m-0">
+                  <%= f.text_field "mappings[#{index}][field]", class: 'form-control' %>
+                </div>
+              <% else %>
+                <span data-behavior="default-field-label"><%= header %></span>
+                <span data-behavior="na-field-label" class="d-none">N/A</span>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
     </table>
     <div class="form-actions">
       <%= f.submit 'Import CSV', class: 'btn btn-primary mr-1' %> or
@@ -66,3 +69,17 @@
     </div>
   <% end %>
 </div>
+
+<div class="col-12 p-0 order-3 order-xxl-4">
+  <div class="content-container mt-0">
+    <h4 class="header-underline">Output console</h4>
+    <div id="status"></div>
+    <%= content_tag :div, id: 'result', style: 'display:none', data: { url: main_app.status_console_index_path }  do %>
+      <div id="console" class="mx-0 mb-0"></div>
+    <% end %>
+  </div>
+</div>
+
+<script type="text/javascript" charset="utf-8">
+  ConsoleUpdater.jobId = <%= @last_job %>;
+</script>
