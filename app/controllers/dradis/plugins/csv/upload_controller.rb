@@ -17,7 +17,7 @@ module Dradis::Plugins::CSV
 
       MappingImportJob.perform_later(
         file: @attachment.fullpath.to_s,
-        identifier_col_index: mappings_params[:identifier],
+        id_index: mappings_params[:identifier],
         mappings: mappings_params[:mappings].to_h,
         project_id: current_project.id,
         uid: params[:item_id].to_i
