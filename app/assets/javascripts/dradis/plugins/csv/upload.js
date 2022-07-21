@@ -37,14 +37,17 @@ document.addEventListener('turbolinks:load', function() {
       // Update the field select with the one from the RTP
       var rtpFields = $('[data-behavior=dradis-datatable]').data('rtp-fields');
       if (rtpFields) {
-        var fields = rtpFields[$(e.target).val()],
+        var fields = rtpFields[$(e.target).val()] || [],
             $fieldSelect = $(e.target).closest('tr').find('[data-behavior=field-select]');
 
-        $fieldSelect.empty();
-        if (fields) {
+        if (fields.length > 0) {
+          $fieldSelect.empty();
           fields.forEach(function(value) {
             $fieldSelect.append($('<option></option>').attr('value', value).text(value));
           });
+        }
+        else {
+          $fieldSelect.html($('<option disabled="disabled" selected></option>').attr('value', '').text('N/A'));
         }
       }
     });

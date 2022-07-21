@@ -50,9 +50,10 @@
               </div>
             </td>
             <td>
-              <% if current_project.report_template_properties %>
+              <% if @rtp_fields %>
                 <div class="form-group m-0">
-                  <%= f.text_field "mappings[#{index}][field]", class: 'form-control' %>
+                  <% options = @rtp_fields[:issue].any? ? options_for_select(@rtp_fields[:issue]) : options_for_select([['N/A', '']], disabled: '', selected: '') %>
+                  <%= f.select "mappings[#{index}[field]", options, {}, class: 'form-control custom-select w-75', data: { behavior: 'field-select' } %>
                 </div>
               <% else %>
                 <span data-behavior="default-field-label"><%= header %></span>
