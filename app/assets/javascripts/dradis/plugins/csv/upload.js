@@ -21,18 +21,16 @@ document.addEventListener('turbolinks:load', function() {
       // Disable Node Label option and update fields column labels
       $('[data-behavior=type-select]').each(function(i, select) {
         var $tr = $(select).closest('tr');
-
-        $tr.find('[data-behavior=na-field-label]').addClass('d-none');
-        $tr.find('[data-behavior=default-field-label]').removeClass('d-none');
-
         if ($nodeSelect.length && !$nodeSelect.is($(select))) {
           $(select).find('option[value="node"]').attr('disabled', 'disabled');
         } else {
           $(select).find('option[value="node"]').removeAttr('disabled');
         }
       });
-      $nodeSelect.closest('tr').find('[data-behavior=na-field-label]').removeClass('d-none');
-      $nodeSelect.closest('tr').find('[data-behavior=default-field-label]').addClass('d-none');
+
+      var hasNoFields = $(e.target).val() == 'skip' || $(e.target).val() == 'node';
+      $(e.target).closest('tr').find('[data-behavior=na-field-label]').toggleClass('d-none', !hasNoFields);
+      $(e.target).closest('tr').find('[data-behavior=default-field-label]').toggleClass('d-none', hasNoFields);
 
       setDradisFieldSelect($(e.target));
     });
