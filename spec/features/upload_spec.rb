@@ -25,7 +25,7 @@ describe 'upload feature', js: true do
       expect(current_path).to eq(csv.new_project_upload_path(@project))
     end
 
-    it 'lists the fields in the table', focus: true do
+    it 'lists the fields in the table' do
       headers = CSV.open(file_path, &:readline)
 
       within('tbody') do
@@ -84,7 +84,7 @@ describe 'upload feature', js: true do
             expect(page).to have_text('Worker process completed.')
 
             issue = Issue.last
-            expect(issue.fields).to eq({ 'Description' => 'Test CSV', "Id" => '1', 'Title' => 'SQL Injection', 'plugin' => 'csv', 'plugin_id' => '1' })
+            expect(issue.fields).to eq({ 'Description' => 'Test CSV', 'Title' => 'SQL Injection', 'plugin' => 'csv', 'plugin_id' => '1' })
 
             node = issue.affected.first
             expect(node.label).to eq('10.0.0.1')
@@ -97,29 +97,65 @@ describe 'upload feature', js: true do
 
       context 'when project have RTP' do
         before do
-          @project.update(report_template_properties: create(:report_template_properties))
+          @evidence_fields = [
+            { name: 'Location', type: :string, default: true },
+            { name: 'Port', type: :string, default: true}
+          ]
+          @issue_fields = [
+            { name: 'Title', type: :string, default: true },
+            { name: 'Description', type: :string, default: true}
+          ]
+
+          rtp = create(:report_template_properties, evidence_fields: @evidence_fields, issue_fields: @issue_fields)
+
+          @project.update(report_template_properties: rtp)
+
+          page.refresh
         end
 
-        it 'can select which columns to import' do
-          # Refresh to show text inputs
-          page.refresh
+        it 'shows the available fields for the selected type' do
+          select 'Issue Field', from: 'mappings[1][type]'
 
+          within all('tbody tr')[1] do
+            @issue_fields.each do |field|
+              expect(page).to have_selector('option', text: field[:name])
+            end
+          end
+
+          select 'Evidence Field', from: 'mappings[4][type]'
+
+          within all('tbody tr')[4] do
+            @evidence_fields.each do |field|
+              expect(page).to have_selector('option', text: field[:name])
+            end
+          end
+        end
+
+        it 'auto-selects the type and field for the identifier' do
           # Select identifer column
           find('#identifier_0').click
 
-          within all('tbody tr')[1] do
-            select 'Issue Field'
-            find('input[type="text"]').fill_in(with: 'MyTitle')
-          end
+          expect(page).to have_select('mappings[0][type]', selected: 'Issue Field', disabled: true)
+          expect(page).to have_select('mappings[0][field]', selected: 'plugin_id', disabled: true)
+        end
 
-          within all('tbody tr')[3] do
-            select 'Node Label'
-          end
+        it 'can select which columns to import' do
+          # Select identifer column
+          find('#identifier_0').click
 
-          within all('tbody tr')[4] do
-            select 'Evidence Field'
-            find('input[type="text"]').fill_in(with: 'MyLocation')
-          end
+          select 'Issue Field', from: 'mappings[1][type]'
+          select 'Title', from: 'mappings[1][field]'
+
+          select 'Issue Field', from: 'mappings[2][type]'
+          select 'Description', from: 'mappings[2][field]'
+
+          select 'Node Label', from: 'mappings[3][type]'
+
+          select 'Evidence Field', from: 'mappings[4][type]'
+          select 'Location', from: 'mappings[4][field]'
+
+          select 'Evidence Field', from: 'mappings[5][type]'
+          select 'Port', from: 'mappings[5][field]'
 
           perform_enqueued_jobs do
             click_button 'Import CSV'
@@ -129,13 +165,13 @@ describe 'upload feature', js: true do
             expect(page).to have_text('Worker process completed.')
 
             issue = Issue.last
-            expect(issue.fields).to eq({ 'MyTitle' => 'SQL Injection', 'plugin' => 'csv', 'plugin_id' => '1' })
+            expect(issue.fields).to eq({ 'Description' => 'Test CSV', 'Title' => 'SQL Injection', 'plugin' => 'csv', 'plugin_id' => '1' })
 
             node = issue.affected.first
             expect(node.label).to eq('10.0.0.1')
 
             evidence = node.evidence.first
-            expect(evidence.fields).to eq({ 'Label' => '10.0.0.1', 'MyLocation' => '10.0.0.1', 'Title' => '(No #[Title]# field)' })
+            expect(evidence.fields).to eq({ 'Label' => '10.0.0.1', 'Location' => '10.0.0.1', 'Title' => 'SQL Injection', 'Port' => '443' })
           end
         end
       end
