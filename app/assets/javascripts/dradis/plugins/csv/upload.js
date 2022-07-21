@@ -53,7 +53,7 @@ document.addEventListener('turbolinks:load', function() {
       $(e.target).closest('tr').find('[data-behavior=field-label]').text('plugin_id');
 
       $typeSelect.attr('disabled', 'disabled');
-      $typeSelect.val('issue');
+      $typeSelect.val('issue').change();
 
       var $prevIdentifier = $('[data-behavior=identifier]:checked'),
           $prevFieldSelect = $prevIdentifier.closest('tr').find('[data-behavior=field-select]'),
