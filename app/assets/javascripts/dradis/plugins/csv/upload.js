@@ -18,7 +18,7 @@ document.addEventListener('turbolinks:load', function() {
     $('[data-behavior=type-select]').on('change', function(e) {
       var $nodeSelect = $('select option[value="node"]:selected').parent();
 
-      // Disable Node Label option and update fields column labels
+      // Disable Node Label option
       $('[data-behavior=type-select]').each(function(i, select) {
         var $tr = $(select).closest('tr');
         if ($nodeSelect.length && !$nodeSelect.is($(select))) {
@@ -28,11 +28,45 @@ document.addEventListener('turbolinks:load', function() {
         }
       });
 
+      // Update fields column labels
       var hasNoFields = $(e.target).val() == 'skip' || $(e.target).val() == 'node';
-      $(e.target).closest('tr').find('[data-behavior=na-field-label]').toggleClass('d-none', !hasNoFields);
-      $(e.target).closest('tr').find('[data-behavior=default-field-label]').toggleClass('d-none', hasNoFields);
+      if (hasNoFields) {
+        $(e.target).closest('tr').find('[data-behavior=field-label]').text('N/A');
+      }
+      else {
+        var header = $(e.target).closest('tr').find('td:nth-child(2)').text();
+        $(e.target).closest('tr').find('[data-behavior=field-label]').text(header);
+      }
+
 
       setDradisFieldSelect($(e.target));
+    });
+
+    $('[data-behavior=identifier]').on('mousedown', function(e){
+      var $fieldSelect = $(e.target).closest('tr').find('[data-behavior=field-select]'),
+          $typeSelect = $(e.target).closest('tr').find('[data-behavior=type-select]');
+
+      $fieldSelect.attr('disabled', 'disabled');
+      // With RTP
+      $fieldSelect.html($('<option selected></option>').attr('value', 'plugin_id').text('plugin_id'));
+      // With no RTP
+      $(e.target).closest('tr').find('[data-behavior=field-label]').text('plugin_id');
+
+      $typeSelect.attr('disabled', 'disabled');
+      $typeSelect.val('issue');
+
+      var $prevIdentifier = $('[data-behavior=identifier]:checked'),
+          $prevFieldSelect = $prevIdentifier.closest('tr').find('[data-behavior=field-select]'),
+          $prevTypeSelect = $prevIdentifier.closest('tr').find('[data-behavior=type-select]');
+
+      $prevFieldSelect.removeAttr('disabled');
+
+      $prevTypeSelect.removeAttr('disabled')
+      // With RTP
+      setDradisFieldSelect($prevTypeSelect);
+      // With no RTP
+      var header = $prevIdentifier.closest('tr').find('td:nth-child(2)').text();
+      $prevIdentifier.closest('tr').find('[data-behavior=field-label]').text(header);
     });
 
     $('[data-behavior~=mapping-form]').on('ajax:before', function() {
