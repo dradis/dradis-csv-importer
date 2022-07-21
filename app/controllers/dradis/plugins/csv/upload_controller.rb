@@ -9,7 +9,7 @@ module Dradis::Plugins::CSV
 
       @headers = ::CSV.open(@attachment.fullpath, &:readline)
 
-      @last_log = Log.new.uid
+      @log_uid = Log.new.uid + 1
     end
 
     def create
