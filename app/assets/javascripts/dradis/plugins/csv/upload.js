@@ -112,16 +112,20 @@ document.addEventListener('turbolinks:load', function() {
         fields.forEach(function(value) {
           $fieldSelect
             .removeAttr('disabled')
-            .append($('<option></option>')
-            .attr('value', value)
-            .text(value));
+            .append(
+              $('<option></option>')
+              .attr('value', value)
+              .text(value)
+            );
         });
       } else {
         $fieldSelect
           .attr('disabled', 'disabled')
-          .html($('<option selected></option>')
-          .attr('value', '')
-          .text('N/A'));
+          .html(
+            $('<option selected></option>')
+            .attr('value', '')
+            .text('N/A')
+          );
       }
     }
   }
