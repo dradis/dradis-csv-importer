@@ -3,14 +3,14 @@ module Dradis::Plugins::CSV
     queue_as :dradis_project
 
     # mappings hash:
-    # The key is the column index, with a hash containing the type of resource (evidence/issue/node)
-    # its supposed to map to and the dradis field for the resource (only for evidence and issues).
+    # The key is the column index, while the value is a hash containing the type of resource (evidence/issue/node).
+    # It's used to map a CSV header to a field in Dradis (only for evidence and issues).
     #
     # e.g.
     # {
-    # '0' => { 'type' => 'node' },
-    # '1' => { 'type' => 'issue', field: 'Title' },
-    # '2' => { 'type' => 'evidence', field: 'Port' }
+    #   '0' => { 'type' => 'node' },
+    #   '1' => { 'type' => 'issue', 'field' => 'Title' },
+    #   '2' => { 'type' => 'evidence', 'field' => 'Port' }
     # }
     def perform(file:, id_index:, mappings:, project_id:, uid:)
       @logger = Log.new(uid: uid)
@@ -27,7 +27,7 @@ module Dradis::Plugins::CSV
       @mappings = mappings
       @project = Project.find(project_id)
 
-      # hash#find converts a hash into an array,
+      # Hash#find converts a hash into an array,
       # e.g. { '0' => { 'type' => 'node' } } to # ['0', { 'type' => 'node' }].
       @node_index =
         if node_mapping = @mappings.find { |index, field| field['type'] == 'node' }

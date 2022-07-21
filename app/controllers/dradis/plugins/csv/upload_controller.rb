@@ -9,7 +9,7 @@ module Dradis::Plugins::CSV
       @default_columns = ['Unique Identifier', 'Column Header From File', 'Type', 'Field in Dradis']
       @headers = ::CSV.open(@attachment.fullpath, &:readline)
 
-      @log_uid = Log.new.uid + 1
+      @log_uid = Log.new.uid
     end
 
     def create
@@ -24,8 +24,6 @@ module Dradis::Plugins::CSV
       )
 
       Resque.redis.del(params[:job_id])
-
-      head :ok
     end
 
     private
