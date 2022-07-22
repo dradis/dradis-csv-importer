@@ -64,9 +64,9 @@ describe 'upload feature', js: true do
           all('tbody tr')[0].hover
           find('#identifier_0').click
 
-          select 'Node Label', from: 'mappings[3][type]'
-          select 'Evidence Field', from: 'mappings[4][type]'
-          select 'Evidence Field', from: 'mappings[5][type]'
+          select 'Node', from: 'mappings[field_attributes][3][type]'
+          select 'Evidence Field', from: 'mappings[field_attributes][4][type]'
+          select 'Evidence Field', from: 'mappings[field_attributes][5][type]'
 
           perform_enqueued_jobs do
             click_button 'Import CSV'
@@ -103,13 +103,13 @@ describe 'upload feature', js: true do
           let (:issue_fields) { [] }
 
           it 'creates records with fields from the headers' do
-            select 'Node Label', from: 'mappings[3][type]'
-            select 'Evidence Field', from: 'mappings[4][type]'
+            select 'Node', from: 'mappings[field_attributes][3][type]'
+            select 'Evidence Field', from: 'mappings[field_attributes][4][type]'
             within all('tbody tr')[4] do
               expect(page).to have_selector('option', text: 'Location')
             end
 
-            select 'Evidence Field', from: 'mappings[5][type]'
+            select 'Evidence Field', from: 'mappings[field_attributes][5][type]'
             within all('tbody tr')[5] do
               expect(page).to have_selector('option', text: 'Port')
             end
@@ -149,7 +149,7 @@ describe 'upload feature', js: true do
           }
 
           it 'shows the available fields for the selected type' do
-            select 'Issue Field', from: 'mappings[1][type]'
+            select 'Issue Field', from: 'mappings[field_attributes][1][type]'
 
             within all('tbody tr')[1] do
               issue_fields.each do |field|
@@ -157,7 +157,7 @@ describe 'upload feature', js: true do
               end
             end
 
-            select 'Evidence Field', from: 'mappings[4][type]'
+            select 'Evidence Field', from: 'mappings[field_attributes][4][type]'
 
             within all('tbody tr')[4] do
               evidence_fields.each do |field|
@@ -167,24 +167,24 @@ describe 'upload feature', js: true do
           end
 
           it 'auto-selects the type and field for the identifier' do
-            expect(page).to have_select('mappings[0][type]', selected: 'Issue Field', disabled: true)
-            expect(page).to have_select('mappings[0][field]', selected: 'plugin_id', disabled: true)
+            expect(page).to have_select('mappings[field_attributes][0][type]', selected: 'Issue Field', disabled: true)
+            expect(page).to have_select('mappings[field_attributes][0][field]', selected: 'plugin_id', disabled: true)
           end
 
           it 'can select which columns to import' do
-            select 'Issue Field', from: 'mappings[1][type]'
-            select 'Title', from: 'mappings[1][field]'
+            select 'Issue Field', from: 'mappings[field_attributes][1][type]'
+            select 'Title', from: 'mappings[field_attributes][1][field]'
 
-            select 'Issue Field', from: 'mappings[2][type]'
-            select 'Description', from: 'mappings[2][field]'
+            select 'Issue Field', from: 'mappings[field_attributes][2][type]'
+            select 'Description', from: 'mappings[field_attributes][2][field]'
 
-            select 'Node Label', from: 'mappings[3][type]'
+            select 'Node', from: 'mappings[field_attributes][3][type]'
 
-            select 'Evidence Field', from: 'mappings[4][type]'
-            select 'Location', from: 'mappings[4][field]'
+            select 'Evidence Field', from: 'mappings[field_attributes][4][type]'
+            select 'Location', from: 'mappings[field_attributes][4][field]'
 
-            select 'Evidence Field', from: 'mappings[5][type]'
-            select 'Port', from: 'mappings[5][field]'
+            select 'Evidence Field', from: 'mappings[field_attributes][5][type]'
+            select 'Port', from: 'mappings[field_attributes][5][field]'
 
             perform_enqueued_jobs do
               click_button 'Import CSV'
