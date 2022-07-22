@@ -37,39 +37,19 @@ document.addEventListener('turbolinks:load', function() {
         $fieldLabel.text(header);
       }
 
-      setDradisFieldSelect($(this));
+      _setDradisFieldSelect($(this));
     });
 
     $('[data-behavior=identifier]').on('mousedown', function(e){
-      var $currentRow = $(this).closest('tr'),
-          $fieldSelect = $currentRow.find('[data-behavior=field-select]'),
-          $typeSelect = $currentRow.find('[data-behavior=type-select]');
+      var $previousRow = $('[data-behavior=identifier]:checked').closest('tr'),
+          $currentRow = $(this).closest('tr');
 
-      $typeSelect.attr('disabled', 'disabled');
-      $typeSelect.val('issue').change();
-
-      $fieldSelect.attr('disabled', 'disabled');
-      // With RTP
-      $fieldSelect.html($('<option selected></option>').attr('value', 'plugin_id').text('plugin_id'));
-      // With no RTP
-      $currentRow.find('[data-behavior=field-label]').text('plugin_id');
-
-      var $prevRow = $('[data-behavior=identifier]:checked').closest('tr');
-          $prevFieldSelect = $prevRow.find('[data-behavior=field-select]'),
-          $prevTypeSelect = $prevRow.find('[data-behavior=type-select]');
-
-      $prevFieldSelect.removeAttr('disabled');
-      $prevTypeSelect.removeAttr('disabled');
-
-      // With RTP
-      setDradisFieldSelect($prevTypeSelect);
-      // With no RTP
-      var header = $prevRow.find('[data-behavior=field-label]').data('header');
-      $prevRow.find('[data-behavior=field-label]').text(header);
+      _resetRow($previousRow);
+      _disableIdentifierRow($currentRow);
     });
 
     $('[data-behavior~=mapping-form]').submit(function() {
-      var valid = validateNodeSelected();
+      var valid = _validateNodeSelected();
 
       if (!valid) {
         $(this).find('input[type="submit"]').attr('disabled', false).val('Import CSV');
@@ -82,7 +62,66 @@ document.addEventListener('turbolinks:load', function() {
       return valid;
     });
 
-    function validateNodeSelected() {
+    // Private methods
+
+    function _setDradisFieldSelect($select) {
+      var rtpFields = $('[data-behavior=dradis-datatable]').data('rtp-fields');
+      if (rtpFields) {
+        var fields = rtpFields[$select.val()] || [],
+            $fieldSelect = $select.closest('tr').find('[data-behavior=field-select]');
+
+        if (fields.length > 0) {
+          $fieldSelect.empty();
+          fields.forEach(function(value) {
+            $fieldSelect
+              .removeAttr('disabled')
+              .append(
+                $('<option></option>')
+                .attr('value', value)
+                .text(value)
+              );
+          });
+        } else {
+          $fieldSelect
+            .attr('disabled', 'disabled')
+            .html(
+              $('<option selected></option>')
+              .attr('value', '')
+              .text('N/A')
+            );
+        }
+      }
+    }
+
+    function _disableIdentifierRow($row) {
+      var $fieldSelect = $row.find('[data-behavior=field-select]'),
+          $typeSelect = $row.find('[data-behavior=type-select]');
+
+      $typeSelect.attr('disabled', 'disabled');
+      $typeSelect.val('issue').change();
+
+      $fieldSelect.attr('disabled', 'disabled');
+      // With RTP
+      $fieldSelect.html($('<option selected></option>').attr('value', 'plugin_id').text('plugin_id'));
+      // With no RTP
+      $row.find('[data-behavior=field-label]').text('plugin_id');
+    }
+
+    function _resetRow($row) {
+      var $fieldSelect = $row.find('[data-behavior=field-select]'),
+          $typeSelect = $row.find('[data-behavior=type-select]'),
+          $fieldLabel = $row.find('[data-behavior=field-label]');
+
+      $fieldSelect.removeAttr('disabled');
+      $typeSelect.removeAttr('disabled');
+
+      // With RTP
+      _setDradisFieldSelect($typeSelect);
+      // With no RTP
+      $fieldLabel.text($fieldLabel.data('header'));
+    }
+
+    function _validateNodeSelected() {
       var $validationMessage = $('[data-behavior~=node-type-validation-message]');
       $validationMessage.addClass('d-none');
 
@@ -97,35 +136,6 @@ document.addEventListener('turbolinks:load', function() {
       }
 
       return valid;
-    }
-  }
-
-  var setDradisFieldSelect = function($select) {
-    var rtpFields = $('[data-behavior=dradis-datatable]').data('rtp-fields');
-    if (rtpFields) {
-      var fields = rtpFields[$select.val()] || [],
-          $fieldSelect = $select.closest('tr').find('[data-behavior=field-select]');
-
-      if (fields.length > 0) {
-        $fieldSelect.empty();
-        fields.forEach(function(value) {
-          $fieldSelect
-            .removeAttr('disabled')
-            .append(
-              $('<option></option>')
-              .attr('value', value)
-              .text(value)
-            );
-        });
-      } else {
-        $fieldSelect
-          .attr('disabled', 'disabled')
-          .html(
-            $('<option selected></option>')
-            .attr('value', '')
-            .text('N/A')
-          );
-      }
     }
   }
 });
