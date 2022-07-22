@@ -3,10 +3,10 @@ module Dradis::Plugins::CSV
     include ProjectScoped
 
     before_action :load_attachment, only: [:new, :create]
+    before_action :load_rtp_fields, only: [:new]
 
     def new
-      @default_columns = ['Unique Identifier', 'Column Header From File', 'Type', 'Field in Dradis']
-
+      @default_columns = ['ID', 'Column Header', 'Entity', 'Dradis Field']
       @headers = ::CSV.open(@attachment.fullpath, &:readline)
 
       @log_uid = Log.new.uid
@@ -30,6 +30,17 @@ module Dradis::Plugins::CSV
 
     def job_logger
       @job_logger ||= Log.new(uid: params[:log_uid].to_i)
+    end
+
+    def load_rtp_fields
+      rtp = current_project.report_template_properties
+      @rtp_fields =
+        unless rtp.nil?
+          {
+            evidence: rtp.evidence_fields.map(&:name),
+            issue: rtp.issue_fields.map(&:name)
+          }
+        end
     end
 
     def load_attachment

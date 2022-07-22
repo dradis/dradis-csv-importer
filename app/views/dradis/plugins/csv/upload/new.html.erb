@@ -26,21 +26,22 @@
       data-default-columns="<%= @default_columns %>"
       data-item-name="csv_item"
       data-paging="false"
+      data-rtp-fields="<%= @rtp_fields.to_json %>"
     >
       <thead>
         <tr>
-          <th class="no-sort">Unique Identifier <i class="fa fa-question-circle" data-toggle="tooltip" title="Ensure duplicate issues with this value are not created."></i></th>
-          <th>Column Header From File</th>
-          <th class="no-sort">Type</th>
-          <th>Field in Dradis</th>
+          <th class="no-sort">ID <i class="fa fa-question-circle" data-toggle="tooltip" title="Set this field as a unique id to prevent creating duplicate issues with the same value for this field."></i></th>
+          <th>Column Header</th>
+          <th class="no-sort">Entity</th>
+          <th>Dradis Field</th>
         </tr>
       </thead>
       <tbody>
         <% @headers.each_with_index do |header, index| %>
-          <tr>
+          <tr class="issue-type">
             <td>
               <div class="form-check">
-                <%= f.radio_button 'identifier', index, class: 'form-check-input', data: { behavior: 'identifier' }, required: true %>
+                <%= f.radio_button 'identifier', index, class: 'form-check-input identifier', data: { behavior: 'identifier' }, required: true %>
                 <%= f.label :identifier, class: 'form-check-label' do %>
                   <span class="sr-only">Select</span>
                 <% end %>
@@ -49,17 +50,17 @@
             <td><%= header %></td>
             <td>
               <div class="form-group m-0">
-                <%= f.select "mappings[field_attributes][#{index}][type]", [['Issue Field', 'issue'], ['Evidence Field', 'evidence'], ['Node Label', 'node']], {}, class: 'form-control custom-select w-75', data: { behavior: 'type-select' } %>
+                <%= f.select "mappings[field_attributes][#{index}][type]", [['Issue Field', 'issue'], ['Evidence Field', 'evidence'], ['Node', 'node'], ['&#9472;'.html_safe, 'divider'], ['Do Not Import','skip']], { disabled: 'divider' }, class: 'form-control custom-select w-75', data: { behavior: 'type-select' } %>
               </div>
             </td>
             <td>
-              <% if current_project.report_template_properties %>
+              <% if @rtp_fields %>
                 <div class="form-group m-0">
-                  <%= f.text_field "mappings[field_attributes][#{index}][field]", class: 'form-control' %>
+                  <% options = @rtp_fields[:issue].any? ? options_for_select(@rtp_fields[:issue]) : options_for_select([[header, header]], disabled: header, selected: header) %>
+                  <%= f.select "mappings[field_attributes][#{index}][field]", options, {}, class: 'form-control custom-select w-75', data: { behavior: 'field-select', header: header } %>
                 </div>
               <% else %>
-                <span data-behavior="default-field-label"><%= header %></span>
-                <span data-behavior="na-field-label" class="d-none">N/A</span>
+                <span data-behavior="field-label" data-header="<%= header %>" ><%= header %></span>
               <% end %>
             </td>
           </tr>
