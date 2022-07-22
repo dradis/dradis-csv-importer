@@ -25,6 +25,8 @@ document.addEventListener('turbolinks:load', function() {
         $('[data-behavior=type-select]').find('option[value="node"]').removeAttr('disabled');
       }
 
+      $(this).parents('tr').toggleClass('issue-type', $(this).val() == 'issue');
+
       // Update fields column labels
       var hasNoFields = $(this).val() == 'node' || $(this).val() == 'skip',
           $fieldLabel = $(this).closest('tr').find('[data-behavior=field-label]');

@@ -38,10 +38,10 @@
       </thead>
       <tbody>
         <% @headers.each_with_index do |header, index| %>
-          <tr>
+          <tr class="issue-type">
             <td>
               <div class="form-check">
-                <%= f.radio_button 'identifier', index, class: 'form-check-input', data: { behavior: 'identifier' }, required: true %>
+                <%= f.radio_button 'identifier', index, class: 'form-check-input identifier', data: { behavior: 'identifier' }, required: true %>
                 <%= f.label :identifier, class: 'form-check-label' do %>
                   <span class="sr-only">Select</span>
                 <% end %>

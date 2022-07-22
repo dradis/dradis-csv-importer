@@ -6,7 +6,7 @@ module Dradis::Plugins::CSV
     before_action :load_rtp_fields, only: [:new]
 
     def new
-      @default_columns = ['Unique Identifier', 'Column Header From File', 'Type', 'Field in Dradis']
+      @default_columns = ['ID', 'Column Header From File', 'Type', 'Field in Dradis']
       @headers = ::CSV.open(@attachment.fullpath, &:readline)
 
       @log_uid = Log.new.uid
