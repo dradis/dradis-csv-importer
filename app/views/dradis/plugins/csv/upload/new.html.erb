@@ -56,8 +56,8 @@
             <td>
               <% if @rtp_fields %>
                 <div class="form-group m-0">
-                  <% options = @rtp_fields[:issue].any? ? options_for_select(@rtp_fields[:issue]) : options_for_select([['N/A', '']], disabled: '', selected: '') %>
-                  <%= f.select "mappings[#{index}][field]", options, {}, class: 'form-control custom-select w-75', data: { behavior: 'field-select' } %>
+                  <% options = @rtp_fields[:issue].any? ? options_for_select(@rtp_fields[:issue]) : options_for_select([[header, '']]) %>
+                  <%= f.select "mappings[#{index}][field]", options, {}, class: 'form-control custom-select w-75', disabled: @rtp_fields[:issue].empty?, data: { behavior: 'field-select', header: header } %>
                 </div>
               <% else %>
                 <span data-behavior="field-label" data-header="<%= header %>" ><%= header %></span>

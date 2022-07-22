@@ -67,27 +67,34 @@ document.addEventListener('turbolinks:load', function() {
     function _setDradisFieldSelect($select) {
       var rtpFields = $('[data-behavior=dradis-datatable]').data('rtp-fields');
       if (rtpFields) {
-        var fields = rtpFields[$select.val()] || [],
+        var fields = rtpFields[$select.val()],
             $fieldSelect = $select.closest('tr').find('[data-behavior=field-select]');
 
-        if (fields.length > 0) {
-          $fieldSelect.empty();
-          fields.forEach(function(value) {
+        if ($select.val() in rtpFields){
+          if (fields.length > 0) {
+            $fieldSelect.empty();
+            fields.forEach(function(value) {
+              $fieldSelect
+                .removeAttr('disabled')
+                .append(
+                  $('<option></option>').attr('value', value).text(value)
+                );
+            });
+          }
+          else {
+            var header = $fieldSelect.data('header');
             $fieldSelect
-              .removeAttr('disabled')
-              .append(
-                $('<option></option>')
-                .attr('value', value)
-                .text(value)
+              .attr('disabled', 'disabled')
+              .html(
+                $('<option></option>').attr('value', '').text(header)
               );
-          });
-        } else {
+          }
+        }
+        else {
           $fieldSelect
             .attr('disabled', 'disabled')
             .html(
-              $('<option selected></option>')
-              .attr('value', '')
-              .text('N/A')
+              $('<option></option>').attr('value', '').text('N/A')
             );
         }
       }
