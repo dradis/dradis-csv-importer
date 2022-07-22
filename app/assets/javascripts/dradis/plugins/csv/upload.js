@@ -92,8 +92,13 @@ document.addEventListener('turbolinks:load', function() {
                 $('<option disabled="disabled" selected></option>').attr('value', header).text(header)
               );
           }
-        }
-        else {
+        } else if ($select.val()== 'node') { 
+          $fieldSelect
+            .attr('disabled', 'disabled')
+            .html(
+              $('<option></option>').attr('value', '').text('Label')
+            );
+        } else {
           $fieldSelect
             .attr('disabled', 'disabled')
             .html(
