@@ -60,7 +60,7 @@
                   <%= f.select "mappings[#{index}][field]", options, {}, class: 'form-control custom-select w-75', data: { behavior: 'field-select' } %>
                 </div>
               <% else %>
-                <span data-behavior="field-label"><%= header %></span>
+                <span data-behavior="field-label" data-header="<%= header %>" ><%= header %></span>
               <% end %>
             </td>
           </tr>

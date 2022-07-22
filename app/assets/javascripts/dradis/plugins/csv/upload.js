@@ -15,58 +15,57 @@ window.addEventListener('job-done', function(e){
 
 document.addEventListener('turbolinks:load', function() {
   if ($('body.upload.new').length) {
-    $('[data-behavior=type-select]').on('change', function(e) {
+    $('[data-behavior=type-select]').on('change', function() {
       var $nodeSelect = $('select option[value="node"]:selected').parent();
 
       // Disable Node Label option
-      $('[data-behavior=type-select]').each(function(i, select) {
-        var $tr = $(select).closest('tr');
-        if ($nodeSelect.length && !$nodeSelect.is($(select))) {
-          $(select).find('option[value="node"]').attr('disabled', 'disabled');
-        } else {
-          $(select).find('option[value="node"]').removeAttr('disabled');
-        }
-      });
+      if ($nodeSelect.length) {
+        $('[data-behavior=type-select]').not($nodeSelect).find('option[value="node"]').attr('disabled', 'disabled');
+      } else {
+        $('[data-behavior=type-select]').find('option[value="node"]').removeAttr('disabled');
+      }
 
       // Update fields column labels
-      var hasNoFields = $(e.target).val() == 'skip' || $(e.target).val() == 'node';
+      var hasNoFields = $(this).val() == 'node' || $(this).val() == 'skip',
+          $fieldLabel = $(this).closest('tr').find('[data-behavior=field-label]');
+
       if (hasNoFields) {
-        $(e.target).closest('tr').find('[data-behavior=field-label]').text('N/A');
+        $fieldLabel.text('N/A');
       }
       else {
-        var header = $(e.target).closest('tr').find('td:nth-child(2)').text();
-        $(e.target).closest('tr').find('[data-behavior=field-label]').text(header);
+        var header = $fieldLabel.data('header');
+        $fieldLabel.text(header);
       }
 
-
-      setDradisFieldSelect($(e.target));
+      setDradisFieldSelect($(this));
     });
 
     $('[data-behavior=identifier]').on('mousedown', function(e){
-      var $fieldSelect = $(e.target).closest('tr').find('[data-behavior=field-select]'),
-          $typeSelect = $(e.target).closest('tr').find('[data-behavior=type-select]');
+      var $currentRow = $(this).closest('tr'),
+          $fieldSelect = $currentRow.find('[data-behavior=field-select]'),
+          $typeSelect = $currentRow.find('[data-behavior=type-select]');
+
+      $typeSelect.attr('disabled', 'disabled');
+      $typeSelect.val('issue').change();
 
       $fieldSelect.attr('disabled', 'disabled');
       // With RTP
       $fieldSelect.html($('<option selected></option>').attr('value', 'plugin_id').text('plugin_id'));
       // With no RTP
-      $(e.target).closest('tr').find('[data-behavior=field-label]').text('plugin_id');
+      $currentRow.find('[data-behavior=field-label]').text('plugin_id');
 
-      $typeSelect.attr('disabled', 'disabled');
-      $typeSelect.val('issue').change();
-
-      var $prevIdentifier = $('[data-behavior=identifier]:checked'),
-          $prevFieldSelect = $prevIdentifier.closest('tr').find('[data-behavior=field-select]'),
-          $prevTypeSelect = $prevIdentifier.closest('tr').find('[data-behavior=type-select]');
+      var $prevRow = $('[data-behavior=identifier]:checked').closest('tr');
+          $prevFieldSelect = $prevRow.find('[data-behavior=field-select]'),
+          $prevTypeSelect = $prevRow.find('[data-behavior=type-select]');
 
       $prevFieldSelect.removeAttr('disabled');
+      $prevTypeSelect.removeAttr('disabled');
 
-      $prevTypeSelect.removeAttr('disabled')
       // With RTP
       setDradisFieldSelect($prevTypeSelect);
       // With no RTP
-      var header = $prevIdentifier.closest('tr').find('td:nth-child(2)').text();
-      $prevIdentifier.closest('tr').find('[data-behavior=field-label]').text(header);
+      var header = $prevRow.find('[data-behavior=field-label]').data('header');
+      $prevRow.find('[data-behavior=field-label]').text(header);
     });
 
     $('[data-behavior~=mapping-form]').submit(function() {
