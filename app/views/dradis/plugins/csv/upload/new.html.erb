@@ -50,7 +50,7 @@
             <td><%= header %></td>
             <td>
               <div class="form-group m-0">
-                <%= f.select "mappings[field_attributes][#{index}][type]", [['Issue Field', 'issue'], ['Evidence Field', 'evidence'], ['Node Label', 'node'], ['&#9472;'.html_safe, 'divider'], ['Do Not Import','skip']], { disabled: 'divider' }, class: 'form-control custom-select w-75', data: { behavior: 'type-select' } %>
+                <%= f.select "mappings[field_attributes][#{index}][type]", [['Issue Field', 'issue'], ['Evidence Field', 'evidence'], ['Node', 'node'], ['&#9472;'.html_safe, 'divider'], ['Do Not Import','skip']], { disabled: 'divider' }, class: 'form-control custom-select w-75', data: { behavior: 'type-select' } %>
               </div>
             </td>
             <td>

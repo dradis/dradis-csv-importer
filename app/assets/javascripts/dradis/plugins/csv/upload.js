@@ -28,13 +28,15 @@ document.addEventListener('turbolinks:load', function() {
       $(this).parents('tr').toggleClass('issue-type', $(this).val() == 'issue');
 
       // Update fields column labels
-      var hasNoFields = $(this).val() == 'node' || $(this).val() == 'skip',
+      var nodeSelected = $(this).val() == 'node',
+          skipSelected = $(this).val() == 'skip',
           $fieldLabel = $(this).closest('tr').find('[data-behavior=field-label]');
 
-      if (hasNoFields) {
+      if (skipSelected) {
         $fieldLabel.text('N/A');
-      }
-      else {
+      } else if (nodeSelected) {
+        $fieldLabel.text('Label');
+      } else {
         var header = $fieldLabel.data('header');
         $fieldLabel.text(header);
       }
