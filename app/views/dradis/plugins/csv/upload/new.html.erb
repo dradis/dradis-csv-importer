@@ -50,14 +50,14 @@
             <td><%= header %></td>
             <td>
               <div class="form-group m-0">
-                <%= f.select "mappings[#{index}][type]", [['Issue Field', 'issue'], ['Evidence Field', 'evidence'], ['Node Label', 'node'], ['&#9472;'.html_safe, 'divider'], ['Do Not Import','skip']], { disabled: 'divider' }, class: 'form-control custom-select w-75', data: { behavior: 'type-select' } %>
+                <%= f.select "mappings[field_attributes][#{index}][type]", [['Issue Field', 'issue'], ['Evidence Field', 'evidence'], ['Node Label', 'node'], ['&#9472;'.html_safe, 'divider'], ['Do Not Import','skip']], { disabled: 'divider' }, class: 'form-control custom-select w-75', data: { behavior: 'type-select' } %>
               </div>
             </td>
             <td>
               <% if @rtp_fields %>
                 <div class="form-group m-0">
                   <% options = @rtp_fields[:issue].any? ? options_for_select(@rtp_fields[:issue]) : options_for_select([[header, header]], disabled: header, selected: header) %>
-                  <%= f.select "mappings[#{index}][field]", options, {}, class: 'form-control custom-select w-75', data: { behavior: 'field-select', header: header } %>
+                  <%= f.select "mappings[field_attributes][#{index}][field]", options, {}, class: 'form-control custom-select w-75', data: { behavior: 'field-select', header: header } %>
                 </div>
               <% else %>
                 <span data-behavior="field-label" data-header="<%= header %>" ><%= header %></span>
