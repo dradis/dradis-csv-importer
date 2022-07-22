@@ -86,9 +86,8 @@ document.addEventListener('turbolinks:load', function() {
           else {
             var header = $fieldSelect.data('header');
             $fieldSelect
-              .attr('disabled', 'disabled')
               .html(
-                $('<option></option>').attr('value', '').text(header)
+                $('<option disabled="disabled" selected></option>').attr('value', header).text(header)
               );
           }
         }
